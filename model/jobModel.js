@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const jobSchema = new mongoose.Schema ({
-     
+    email:String, 
     user_id : {
         type:Number,
         

@@ -11,6 +11,7 @@ const { jobValidation } = require("../validators/bodyValidator");
 router.post('/add', async(req, res) => {
   console.log(req.body)
   const job = new Job({
+    email:req.session.email,
     user_id: req.body.user_id, 
     location:req.body.location,
     company_name:req.body.company_name,
@@ -49,12 +50,12 @@ console.log(job)
 });
  
 router.get('/showjobs',(req,res) =>{
+  
   Job.find({},(err,data) => {
       if(err) throw err;
       res.status(200).send(data);
   });
 });
-
 
 
 

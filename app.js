@@ -3,8 +3,8 @@ const app = express();
 const db = require('./config/db');
 const port = process.env.PORT || 5000;
 const cors = require('cors');
-// const signUpValidation = require("./validators/bodyValidator");
-// const signInValidation = require("./validators/bodyValidator");
+const signUpValidation = require("./validators/bodyValidator");
+const signInValidation = require("./validators/bodyValidator");
 const Job = require('./model/jobModel'); 
 var jobRouter = require('./routes/job');
 
@@ -50,7 +50,9 @@ app.set('view engine','hbs')
 
 // })
 
-
+app.get('/update',(req, res)=>{
+    res.render('postjobupdate')
+})
 // app.get('/delete',auth,async(req, res)=>{
 //     let id = mongoose.Types.ObjectId(req.query.id)
 //     await Price.findOneAndRemove({_id:id})
@@ -99,6 +101,7 @@ app.post('/signup',async(req,res) => {
     if(email){
         return res.send('SORRY This email already registered');
     }
+    console.log(req.body)
     User.create({
         firstName: req.body.firstName,
         lastName: req.body.lateName,
@@ -115,7 +118,7 @@ app.get('/login',(req, res) =>{
 });
 
 app.post('/login',(req,res) => {
-    User.findOne({phoneNumber:req.body.phoneNumber},(err,data) => {
+    User.findOne({email:req.body.email},(err,data) => {
         if(err) return res.status(500).send("Error while Login");
         if(!data) return res.send({auth:false,token:'No User Found Register First'});
         else{
@@ -123,12 +126,16 @@ app.post('/login',(req,res) => {
             // (userinput, password in db)
             const passIsValid = bcrypt.compareSync(req.body.password,data.password);
             // if password not match
-            if(!passIsValid) return res.redirect('/login');
+            if(passIsValid){
             // generate token
             // (tell on which unqiue key, secret, expire time(3600 1 hrs))
             req.session.email=data.email
             req.session.userID=data._id
-            return res.render('list')
+            return res.render('list')}
+            else{
+                console.log(data)
+            return res.redirect('/login');
+            }
             
     
         }
